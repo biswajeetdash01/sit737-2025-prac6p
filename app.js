@@ -1,15 +1,7 @@
 const express = require('express');
 const winston = require('winston');
-const fs = require('fs');
-const path = require('path');
 const app = express();
 const port = 3000;
-
-// Create logs directory if it doesn't exist
-const logsDir = path.join(__dirname, 'logs');
-if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir);
-}
 
 // Configure Winston logger
 const logger = winston.createLogger({
@@ -25,19 +17,7 @@ const logger = winston.createLogger({
   ],
 });
 
-// Root endpoint for health checks
-app.get('/', (req, res) => {
-  res.json({
-    message: 'Calculator Microservice',
-    status: 'healthy',
-    endpoints: {
-      operations: ['/add', '/subtract', '/multiply', '/divide', '/power', '/sqrt', '/modulo'],
-      example: '/add?num1=5&num2=3'
-    }
-  });
-});
-
-// Enhanced Middleware for parameter validation
+// Enhanced Middleware for parameter validation (supports single-param operations like sqrt)
 const validateNumbers = (req, res, next) => {
   const num1 = parseFloat(req.query.num1);
   const num2 = req.query.num2 !== undefined ? parseFloat(req.query.num2) : null;
@@ -45,7 +25,7 @@ const validateNumbers = (req, res, next) => {
   if (isNaN(num1)) {
     logger.error('Invalid num1 parameter provided');
     return res.status(400).json({ error: 'num1 must be a valid number' });
-  }
+}
 
   // Only validate num2 if the operation requires it
   if (req.path !== '/sqrt' && isNaN(num2)) {
@@ -57,7 +37,7 @@ const validateNumbers = (req, res, next) => {
   next();
 };
 
-// API Endpoints
+// Original API Endpoints (unchanged)
 app.get('/add', validateNumbers, (req, res) => {
   const { num1, num2 } = req.numbers;
   const result = num1 + num2;
@@ -90,6 +70,7 @@ app.get('/divide', validateNumbers, (req, res) => {
   res.json({ result });
 });
 
+// New API Endpoints for enhanced functionality
 app.get('/power', validateNumbers, (req, res) => {
   const { num1, num2 } = req.numbers;
   const result = Math.pow(num1, num2);
@@ -119,14 +100,7 @@ app.get('/modulo', validateNumbers, (req, res) => {
   res.json({ result });
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  logger.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
-});
-
 // Start server
-app.listen(port, '0.0.0.0', () => {
-  logger.info(`Calculator service running at http://0.0.0.0:${port}`);
-  console.log(`Calculator service running at http://localhost:${port}`);
+app.listen(port, () => {
+  console.log(`Enhanced calculator service running at http://localhost:${3000}`);
 });

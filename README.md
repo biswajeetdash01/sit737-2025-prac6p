@@ -1,23 +1,30 @@
-# SIT737-2025-Prac5P: Containerized Calculator Microservice
+# Kubernetes Deployment for Node.js Application
 
-## Overview
-This project demonstrates containerizing a Node.js calculator microservice using Docker, with health monitoring and automatic recovery features. The application provides REST API endpoints for basic arithmetic operations and logs all activity using Winston.
-
-## Features
-- REST API endpoints for mathematical operations
-- Request validation and error handling
-- Winston logging (console and file)
-- Docker containerization
-- Health monitoring with automatic restart
-- Persistent log storage
+This project demonstrates the deployment of a containerized application to a Kubernetes cluster using Minikube.
 
 ## Prerequisites
-- Docker Desktop
-- Node.js (for local development)
-- Git
+
+- Windows 10/11 (64-bit)
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [Docker](https://docs.docker.com/desktop/install/windows-install/)
+- Virtualization enabled in BIOS
 
 ## Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/biswajeetdash01/sit737-2025-prac5p.git
-   cd sit737-2025-prac5p
+
+1. **Install Minikube**:
+   ```powershell
+   choco install minikube kubernetes-cli
+## Start Minikube cluster:
+minikube start
+## Verify cluster status
+   minikube status
+kubectl cluster-info
+## Apply the deployment
+kubectl apply -f deployment.yaml
+
+## Apply the service
+kubectl apply -f service.yaml
+
+## Accessing the Application
+minikube service node-app-service
